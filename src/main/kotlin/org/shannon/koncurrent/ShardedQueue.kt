@@ -1,13 +1,9 @@
 package org.shannon.koncurrent
 
-import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 typealias KeyFactory<T> = (T) -> Any
-
-val defaultKeyFactory: KeyFactory<Any> = { it }
 
 class ShardedQueue<T>(val shardCount: Int, bufferSize: Int, val keyFactory: KeyFactory<T>) {
     constructor(shardCount: Int, bufferSize: Int) : this(shardCount, bufferSize, { it as Any })
