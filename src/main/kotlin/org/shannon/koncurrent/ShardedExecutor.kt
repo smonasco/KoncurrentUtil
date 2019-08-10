@@ -7,7 +7,7 @@ class ShardedExecutor<T>(queueFactory: () -> ShardedQueue<T>, worker: (T) -> Uni
 
     init {
         for(shardIndex in 0 until queue.shardCount) {
-            GlobalScope.launch(Dispatchers.Unconfined) { while(true) { worker(queue.take(shardIndex)) } }
+            GlobalScope.launch { while(true) { worker(queue.take(shardIndex)) } }
         }
     }
 

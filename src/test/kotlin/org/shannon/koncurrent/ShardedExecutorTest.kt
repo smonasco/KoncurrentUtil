@@ -1,5 +1,6 @@
 package org.shannon.koncurrent
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -10,7 +11,9 @@ import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
 class ShardedExecutorTest {
-    data class Item(val key: Int, val value: Int)
+    class Item(val key: Int, val value: Int) {
+        override fun hashCode() = key
+    }
 
     private val bufferSize = 1024
     private val shardCount = 1024
@@ -39,9 +42,9 @@ class ShardedExecutorTest {
                 Item(key = random, value = index)
             }
             print(
-                measureTimeMillis {
-                    runBlocking { launch { items.forEach { executor.submit(it) } } }
-                }
+                    measureTimeMillis {
+                        runBlocking { items.forEach { launch { executor.submit(it) } } }
+                    }
             )
             delay(1000)
             assertThat(processedItems).isEqualTo(items.groupBy { it.key })
