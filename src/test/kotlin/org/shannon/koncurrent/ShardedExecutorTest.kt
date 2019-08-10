@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 
 class ShardedExecutorTest {
     data class Item(val key: Int, val value: Int)
@@ -37,7 +38,11 @@ class ShardedExecutorTest {
             val items = List(1_000_000) { Random.nextInt(0, 100) }.mapIndexed { index, random: Int ->
                 Item(key = random, value = index)
             }
-            launch { items.forEach { executor.submit(it) } }
+            print(
+                measureTimeMillis {
+                    runBlocking { launch { items.forEach { executor.submit(it) } } }
+                }
+            )
             delay(1000)
             assertThat(processedItems).isEqualTo(items.groupBy { it.key })
         }

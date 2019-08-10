@@ -23,6 +23,7 @@ dependencies {
 // https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle
 tasks.test {
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
 }
 
 buildScan {
