@@ -12,7 +12,7 @@ import kotlin.system.measureTimeMillis
 class ShardedExecutorTest {
     data class Item(val key: Int, val value: Int)
 
-    private val bufferSize = 10
+    private val bufferSize = 1024
     private val shardCount = 1024
     private val processedItems = ConcurrentHashMap<Int, MutableList<Item>>()
     private val executor = ShardedExecutor({
@@ -35,7 +35,7 @@ class ShardedExecutorTest {
     @Test
     fun `given a bunch of things expect them to be processed within their keys in order`() {
         runBlocking {
-            val items = List(1_000_000) { Random.nextInt(0, 100) }.mapIndexed { index, random: Int ->
+            val items = List(1_000_000) { Random.nextInt(0, 262144) }.mapIndexed { index, random: Int ->
                 Item(key = random, value = index)
             }
             print(

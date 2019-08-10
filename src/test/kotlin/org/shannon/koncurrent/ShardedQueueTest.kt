@@ -71,40 +71,4 @@ class ShardedQueueTest {
             assertThat(millis.await()).isCloseTo(1000L, Offset.offset(100L))
         }
     }
-/*
-    @Test
-    fun `given things with the same hash when take then they are synchronous`() {
-        runBlocking {
-            val given = List(bufferSize) { HashedNonce(1) }
-            given.forEach { queue.put(it) }
-            assertThat(measureTimeMillis {
-                runBlocking {
-                    repeat(given.size) {
-                        launch {
-                            val item = queue.take()
-                            delay(1000)
-                        }
-                    }
-                }
-            }).isCloseTo(10L * 1000L, Offset.offset(500L))
-            //queue.put(HashedNonce(1))
-*/
-/*            //assertThat(measureTimeMillis {
-                given.forEach {
-                    queue.put(it)
-//                    delay(1000)
-                }
-            //}).isCloseTo(10L * 1000L, Offset.offset(500L))
-            //assertThat(measureTimeMillis {
-                repeat(given.size) {
-                    launch {
-                        queue.take()
-//                        delay(1000)
-                    }
-                }
-            //}).isCloseTo(10L * 1000L, Offset.offset(500L))*//*
-
-        }
-    }
-*/
 }
