@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test
 import kotlin.system.measureTimeMillis
 
 class ShardedQueueTest {
-    class HashedNonce(val value: Int) {
+    class HashedNonce(private val value: Int) {
         override fun hashCode() = value
     }
 
-    val bufferSize = 10
-    val shardCount = 16
-    val queue = ShardedQueue<HashedNonce>(shardCount, bufferSize)
+    private val bufferSize = 10
+    private val shardCount = 16
+    private val queue = ShardedQueue<HashedNonce>(shardCount, bufferSize)
 
     @Test
     fun `given things when take then they are returned`() {
@@ -40,7 +40,7 @@ class ShardedQueueTest {
     fun `given item for a shard when take then they are available only in that shard`() {
         runBlocking {
             val shard = 5
-            var millis = async {
+            val millis = async {
                 measureTimeMillis {
                     queue.take(shard)
                 }
@@ -55,7 +55,7 @@ class ShardedQueueTest {
     @Test
     fun `given items for all shards when take they are available for those shards`() {
         runBlocking {
-            var millis = async {
+            val millis = async {
                 measureTimeMillis {
                     for (i in (0 until shardCount)) {
                         repeat(bufferSize) { queue.take(i) }

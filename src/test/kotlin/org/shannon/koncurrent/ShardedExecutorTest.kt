@@ -11,13 +11,12 @@ import kotlin.random.Random
 class ShardedExecutorTest {
     data class Item(val key: Int, val value: Int)
 
-    val bufferSize = 10
-    val shardCount = 1024
-    val processedItems = ConcurrentHashMap<Int, MutableList<Item>>()
-    val executor = ShardedExecutor({
+    private val bufferSize = 10
+    private val shardCount = 1024
+    private val processedItems = ConcurrentHashMap<Int, MutableList<Item>>()
+    private val executor = ShardedExecutor({
         ShardedQueue<Item>(shardCount, bufferSize) { it.key }
     }, {
-        //runBlocking { delay(10) }
         processedItems.getOrPut(it.key, { mutableListOf() }).add(it)
     })
 
@@ -35,7 +34,7 @@ class ShardedExecutorTest {
     @Test
     fun `given a bunch of things expect them to be processed within their keys in order`() {
         runBlocking {
-            val items = List(100_000) { Random.nextInt(0, 100) }.mapIndexed { index, random: Int ->
+            val items = List(1_000_000) { Random.nextInt(0, 100) }.mapIndexed { index, random: Int ->
                 Item(key = random, value = index)
             }
             launch { items.forEach { executor.submit(it) } }

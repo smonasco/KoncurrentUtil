@@ -20,6 +20,11 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.6.1")
 }
 
+// https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle
+tasks.test {
+    useJUnitPlatform()
+}
+
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
     termsOfServiceAgree = "yes"
