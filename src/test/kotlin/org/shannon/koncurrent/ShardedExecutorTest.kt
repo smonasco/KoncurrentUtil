@@ -1,12 +1,12 @@
 package org.shannon.koncurrent
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.LongAdder
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
@@ -36,7 +36,7 @@ class ShardedExecutorTest {
     }
 
     @Test
-    fun `given a bunch of things expect them to be processed within their keys in order`() {
+    fun `given a bunch of things expect them to be processed in order with respect to their keys`() {
         runBlocking {
             val items = List(1_000_000) { Random.nextInt(0, 262144) }.mapIndexed { index, random: Int ->
                 Item(key = random, value = index)
@@ -46,7 +46,7 @@ class ShardedExecutorTest {
                         runBlocking { items.forEach { launch { executor.submit(it) } } }
                     }
             )
-            delay(1000)
+            delay(10)
             assertThat(processedItems).isEqualTo(items.groupBy { it.key })
         }
     }
